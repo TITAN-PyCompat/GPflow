@@ -155,9 +155,16 @@ def ndiagquad(funcs, H: int, Fmu, Fvar, logspace: bool=False, **Ys):
         """
         Stack a list of means/vars into a full block
         """
-        return tf.reshape(
-                tf.concat([tf.reshape(f, (-1, 1)) for f in f_list], axis=1),
-                (-1, 1, Din))
+        tf_major_ver = int(tf.__version__.split(".")[0])
+        tf_minor_ver = int(tf.__version__.split(".")[1])
+        if(tf_major_ver<1):
+            return tf.reshape(
+                    tf.concat([tf.reshape(f, (-1, 1)) for f in f_list], concat_dim=1),
+                    (-1, 1, Din))
+        else:
+            return tf.reshape(
+                    tf.concat([tf.reshape(f, (-1, 1)) for f in f_list], axis=1),
+                    (-1, 1, Din))
 
     if isinstance(Fmu, (tuple, list)):
         Din = len(Fmu)
